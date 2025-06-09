@@ -1,22 +1,10 @@
-app = "nome-do-seu-app"
-
-[build]
-  dockerfile = "./Dockerfile"
+app = "josi-grow-api"
 
 [env]
   PORT = "3000"
 
-[deploy]
-  release_command = ""
-
-[[services]]
-  internal_port = 3000
-  protocol = "tcp"
-
-  [[services.ports]]
-    handlers = ["http"]
-    port = 80
-
-  [[services.ports]]
-    handlers = ["tls", "http"]
-    port = 443
+[http_service]
+  internal_port = 3333
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true

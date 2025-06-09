@@ -6,7 +6,19 @@ import * as fs from 'fs';
 
 @Injectable()
 export class ProductsService {
-    private readonly filePath = join(process.cwd(), 'src', 'data.json');
+
+    private readonly filePath = join(process.cwd(), 'storage', 'data.json');
+
+    constructor() {
+        const dir = join(process.cwd(), 'storage');
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+        }
+
+        if (!fs.existsSync(this.filePath)) {
+            writeFileSync(this.filePath, '[]', 'utf-8');
+        }
+    }
 
     private readProducts(): IProduct[] {
         const data = readFileSync(this.filePath, 'utf-8');
