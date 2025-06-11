@@ -1,32 +1,7 @@
-[
-  {
-    "id": 1,
-    "name": "Perfume 22",
-    "price": "55",
-    "description": "Muito cheiroso!",
-    "message": "Comprar!",
-    "status": true,
-    "imageUrl": "https://res.cloudinary.com/dg4cmxale/image/upload/v1749596757/products/dguariksarmxzbm2qw02.jpg",
-    "publicId": "products/dguariksarmxzbm2qw02"
-  },
-  {
-    "id": 2,
-    "name": "Perfume 22",
-    "price": "55",
-    "description": "Muito cheiroso!",
-    "message": "Comprar!",
-    "status": true,
-    "imageUrl": "https://res.cloudinary.com/dg4cmxale/image/upload/v1749599135/products/dz7zzo8ufzom8vw3jedk.jpg",
-    "publicId": "products/dz7zzo8ufzom8vw3jedk"
-  },
-  {
-    "id": 3,
-    "name": "batom",
-    "price": "44",
-    "description": "444",
-    "message": "clique aqui para comprar",
-    "status": false,
-    "imageUrl": "https://res.cloudinary.com/dg4cmxale/image/upload/v1749599479/products/pxaevckomgqvbpghr7ka.jpg",
-    "publicId": "products/pxaevckomgqvbpghr7ka"
-  }
-]
+{
+  "orderBy": [
+    5,
+    15
+  ],
+  "products": []
+}

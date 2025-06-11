@@ -17,7 +17,10 @@ export class CloudinaryService {
                 { folder },
                 (error, result) => {
                     if (error) {
-                        this.logger.error('Erro no upload:', error.message);
+                        this.logger.error(
+                            `Erro no upload para a pasta "${folder}": ${error.message}`,
+                            error.stack,
+                        );
                         return reject(error);
                     }
                     this.logger.log(`Upload concluído: public_id=${result.public_id}`);
@@ -29,8 +32,20 @@ export class CloudinaryService {
     }
 
     async deleteFile(publicId: string): Promise<void> {
-        this.logger.log(`Removendo arquivo do Cloudinary: public_id=${publicId}`);
-        await this.client.uploader.destroy(publicId);
-        this.logger.log(`Arquivo ${publicId} removido com sucesso.`);
+        try {
+            const res = await this.client.uploader.destroy(publicId);
+            if (res.result !== 'ok' && res.result !== 'not_found') {
+                this.logger.warn(
+                    `Resultado inesperado ao remover public_id=${publicId}: ${res.result}`,
+                );
+            } else {
+                this.logger.log(`Arquivo ${publicId} removido com sucesso.`);
+            }
+        } catch (error) {
+            this.logger.error(
+                `Falha ao remover o arquivo public_id=${publicId}: ${error.message}`,
+                error.stack,
+            );
+        }
     }
 }
