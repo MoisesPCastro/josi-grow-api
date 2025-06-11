@@ -1,11 +1,18 @@
+// src/app.module.ts
 import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
-import { ProductsModule } from './products/products.module';
 import { ConfigModule } from '@nestjs/config';
-import { AuthMiddleware } from './middleware/autorization';
 import { HealthModule } from './health/health.module';
+import { CloudinaryModule } from './providers/cloudinary/cloudinary.module';
+import { ProductsModule } from './products/products.module';
+import { AuthMiddleware } from './middleware/autorization';
 
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true }), ProductsModule, HealthModule],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    HealthModule,
+    CloudinaryModule,
+    ProductsModule,
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

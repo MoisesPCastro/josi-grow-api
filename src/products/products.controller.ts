@@ -1,57 +1,44 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, HttpCode, Query, BadRequestException } from '@nestjs/common';
-import { ProductsService } from './products.service';
-import { IProduct } from './interfaces';
-import { UseInterceptors, UploadedFile } from '@nestjs/common';
+// src/products/products.controller.ts
+import {
+    Controller, Post, Body, Param, Get, Put, Delete,
+    HttpCode, BadRequestException, UseInterceptors, UploadedFile,
+    Query,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { CreateProductDto } from './dtos/createProducts.dto';
-import { join } from 'path';
-import * as fs from 'fs';
-import * as sharp from 'sharp';
-import { memoryStorage } from 'multer';
-
+import { ProductsService } from './products.service';
+import { CloudinaryService } from 'src/providers/cloudinary/cloudinary.service';
+import { CreateProductDto, IProduct } from './interfaces';
 
 @Controller('products')
 export class ProductsController {
-    constructor(private readonly productsService: ProductsService) { }
+    constructor(
+        private readonly productsService: ProductsService,
+        private readonly cloudinary: CloudinaryService,
+    ) { }
 
     @Post()
     @HttpCode(201)
-    @UseInterceptors(
-        FileInterceptor('image', {
-            storage: memoryStorage(),
-        }),
-    )
+    @UseInterceptors(FileInterceptor('image'))
     async create(
-        @Body() productDto: Omit<CreateProductDto, 'image'>,
+        @Body() payload: CreateProductDto,
         @UploadedFile() file: Express.Multer.File,
     ) {
         if (!file) {
             throw new BadRequestException('Image is required');
         }
 
-        const uploadPath = join(process.cwd(), 'public', 'uploads');
-        if (!fs.existsSync(uploadPath)) {
-            fs.mkdirSync(uploadPath, { recursive: true });
-        }
 
-        const filename = `${Date.now()}.jpg`;
-        const filepath = join(uploadPath, filename);
 
-        await sharp(file.buffer)
-            .jpeg({ quality: 80 })
-            .toFile(filepath);
+        const statusBool = payload.status === 'true' || payload.status === true;
 
-        const products = this.productsService.findAll();
-        const newProduct: IProduct = {
-            id: products.length + 1,
-            status: true,
-            ...productDto,
-            image: filename,
-        };
+        await this.productsService.create({
+            ...payload,
+            status: statusBool,
+            imageUrl: 'upload.secure_url,',
+            publicId: 'upload.public_id',
+        });
 
-        this.productsService.create(newProduct);
-
-        return { message: 'Created successfully', product: newProduct };
+        return { message: 'Created successfully' };
     }
 
     @Get()
@@ -60,19 +47,24 @@ export class ProductsController {
     }
 
     @Get(':id')
-    findOne(@Param('id') id: number): IProduct {
+    findOne(@Param('id') id: number) {
         return this.productsService.findOne(+id);
     }
 
     @Put(':id')
-    update(@Param('id') id: number, @Body() updatedProduct: IProduct): string {
-        this.productsService.update(+id, updatedProduct);
-        return 'Updated successfully!'
+    update(
+        @Param('id') id: number,
+        @Body() body: Partial<CreateProductDto>,
+    ) {
+        if (body.status !== undefined) body.status = body.status === 'true' || body.status === true;
+        return this.productsService.update(+id, body);
     }
 
     @Delete(':id')
     @HttpCode(204)
-    delete(@Param('id') id: number): void {
-        return this.productsService.delete(+id);
+    async delete(@Param('id') id: number) {
+        const product = this.productsService.findOne(+id);
+        await this.cloudinary.deleteFile(product.publicId);
+        this.productsService.remove(+id);
     }
 }
