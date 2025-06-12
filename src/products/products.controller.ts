@@ -50,7 +50,6 @@ export class ProductsController {
         this.productsService.remove(+id);
     }
 
-
     @Post()
     @HttpCode(201)
     @UseInterceptors(FileInterceptor('image'))
@@ -62,10 +61,9 @@ export class ProductsController {
 
         const upload = await this.cloudinary.uploadFile(
             file.buffer,
-            'products', // pasta no Cloudinary (opcional)u
+            'products',
         );
 
-        console.log('>>>>>>>>>>>>>>>>.', upload);
         const statusBool = payload.status === 'true' || payload.status === true;
         const emphasisBool =
             payload.emphasis === 'true' ||
@@ -76,12 +74,11 @@ export class ProductsController {
             ...payload,
             emphasis: emphasisBool,
             status: statusBool,
-            imageUrl: upload.secure_url,
-            publicId: upload.public_id,
+            imageUrl: upload.url,
+            publicId: upload.publicId,
         });
         return { message: 'Created successfully' };
     }
-
 
     @Post('orderBy')
     @HttpCode(201)
