@@ -1,45 +1,4 @@
 {
   "orderBy": [],
-  "products": [
-    {
-      "id": 1,
-      "name": "Maubac one",
-      "price": "R$ 10,00",
-      "description": "Promoção com 10% de desconto no Pix!",
-      "message": "Comprar agora!",
-      "status": true,
-      "emphasis": false,
-      "imageUrl": "http://res.cloudinary.com/dg4cmxale/image/upload/v1749767854/products/gcsvfx30fbprhmz6jksx.jpg"
-    },
-    {
-      "id": 2,
-      "name": "Mouac two",
-      "price": "R$ 180,00",
-      "description": "Pra quem tem bom gosto!",
-      "message": "Comprar",
-      "status": true,
-      "emphasis": false,
-      "imageUrl": "http://res.cloudinary.com/dg4cmxale/image/upload/v1749767958/products/we2ackkizsn13vaq4ejl.jpg"
-    },
-    {
-      "id": 4,
-      "name": "Moubac for",
-      "price": "R$ 205,05",
-      "description": "Pra pessoas exigentes!",
-      "message": "Clique aqui para comprar!",
-      "status": true,
-      "emphasis": false,
-      "imageUrl": "http://res.cloudinary.com/dg4cmxale/image/upload/v1749768180/products/iobdskrhmk8gpxyekz62.jpg"
-    },
-    {
-      "id": 4,
-      "name": "Lily",
-      "price": "R$ 55,55",
-      "description": "uuuuuuuuuuuuu",
-      "message": "comprar!",
-      "status": true,
-      "emphasis": false,
-      "imageUrl": "http://res.cloudinary.com/dg4cmxale/image/upload/v1749769130/products/x8puwqkveyvzzfb4tiwz.png"
-    }
-  ]
+  "products": []
 }
