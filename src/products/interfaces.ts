@@ -2,16 +2,18 @@
 export class ICreateProductDto {
   name: string;
   description: string;
+  message: string;
   price: number;
   status: boolean | string
   emphasis?: boolean | string;
 }
 export interface IProduct {
-  id: number;
+  id: string;
   name: string;
   description: string;
   price: number;
   status: boolean | string;
+  message: string;
   imageUrl: string;
   publicId: string;     // identificador para exclusão
   emphasis: boolean | string;
