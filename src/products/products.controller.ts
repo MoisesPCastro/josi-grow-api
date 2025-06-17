@@ -30,7 +30,7 @@ export class ProductsController {
     @Post('orderBy')
     @HttpCode(201)
     createOrderBy(orderByRequest: number[]): void {
-
+        console.log('log do orderby', orderByRequest)
     }
 
     @Get()
