@@ -1,14 +1,13 @@
 // src/products/products.controller.ts
 import {
     Controller, Post, Body, Param, Get, Put, Delete,
-    HttpCode, BadRequestException, UseInterceptors, UploadedFile, Query,
-    ParseArrayPipe,
-    ParseIntPipe,
+    HttpCode, BadRequestException, UseInterceptors,
+    UploadedFile, Query, ParseArrayPipe,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ProductsService } from './products.service';
 import { CloudinaryService } from 'src/providers/cloudinary/cloudinary.service';
-import { ICreateProductDto, IProduct, IProductsFile } from './interfaces';
+import { ICreateProductDto } from './interfaces';
 
 @Controller('products')
 export class ProductsController {
@@ -17,37 +16,31 @@ export class ProductsController {
         private readonly cloudinary: CloudinaryService,
     ) { }
 
+    private parseBoolean(val: any): boolean {
+        if (typeof val === 'boolean') return val;
+        if (typeof val === 'string') return val.toLowerCase() === 'true';
+        return false;
+    }
+
     @Get('orderBy')
     getOrderBy(): number[] {
-        return this.productsService.getOrderBy();
+        return [];
+    }
+
+    @Post('orderBy')
+    @HttpCode(201)
+    createOrderBy(orderByRequest: number[]): void {
+
     }
 
     @Get()
-    findAll(@Query('status') status?: string): IProductsFile {
+    async findAll(@Query('status') status?: string) {
         return this.productsService.findAll(status);
     }
 
-    @Put('update/:id')
-    update(
-        @Param('id', ParseIntPipe) id: number,
-        @Body() body: Partial<ICreateProductDto>,
-    ) {
-        if (body.status !== undefined) {
-            body.status = body.status === 'true' || body.status === true;
-        }
-        if (body.emphasis !== undefined) {
-            body.emphasis = body.emphasis === 'true' || body.emphasis === true;
-        }
-        this.productsService.update(+id, body);
-        return { message: "Produto Atualizado com sucesso" };
-    }
-
-    @Delete(':id')
-    @HttpCode(204)
-    async delete(@Param('id') id: number) {
-        const productFile = this.productsService.findOne(+id);
-        await this.cloudinary.deleteFile(productFile.products[0].publicId);
-        this.productsService.remove(+id);
+    @Get(':id')
+    async findOne(@Param('id') id: string) {
+        return this.productsService.findOne(id);
     }
 
     @Post()
@@ -58,43 +51,37 @@ export class ProductsController {
         @UploadedFile() file: Express.Multer.File,
     ) {
         if (!file) throw new BadRequestException('Image is required');
-
-        const upload = await this.cloudinary.uploadFile(
-            file.buffer,
-            'products',
-        );
-
-        const statusBool = payload.status === 'true' || payload.status === true;
-        const emphasisBool =
-            payload.emphasis === 'true' ||
-            payload.emphasis === true ||
-            false;
+        const upload = await this.cloudinary.uploadFile(file.buffer, 'products');
 
         await this.productsService.create({
             ...payload,
-            emphasis: emphasisBool,
-            status: statusBool,
+            status: this.parseBoolean(payload.status),
+            emphasis: this.parseBoolean(payload.emphasis),
             imageUrl: upload.url,
-            publicId: upload.publicId,
+            publicId: upload.public_id,
         });
-        return { message: 'Created successfully' };
     }
 
-    @Post('orderBy')
-    @HttpCode(201)
-    setOrderBy(
-        @Body(
-            'orderBy',
-            new ParseArrayPipe({ items: Number, optional: false })
-        )
-        orderby: number[],
+    @Put(':id')
+    async update(
+        @Param('id') id: string,
+        @Body() body: Partial<ICreateProductDto>,
     ) {
-        this.productsService.createOrderBy(orderby);
-        return { message: 'OrderBy criado com sucesso' }
+        if (body.status !== undefined) {
+            body.status = body.status === 'true' || body.status === true;
+        }
+        if (body.emphasis !== undefined) {
+            body.emphasis = body.emphasis === 'true' || body.emphasis === true;
+        }
+        await this.productsService.update(id, body);
+        return { message: 'Produto atualizado com sucesso' };
     }
 
-    @Get(':id')
-    findOne(@Param('id') id: number): IProductsFile {
-        return this.productsService.findOne(+id);
+    @Delete(':id')
+    @HttpCode(204)
+    async delete(@Param('id') id: string) {
+        const { products } = await this.productsService.findOne(id);
+        await this.cloudinary.deleteFile(products[0].publicId);
+        await this.productsService.remove(id);
     }
 }
