@@ -51,14 +51,14 @@ export class ProductsController {
         @UploadedFile() file: Express.Multer.File,
     ) {
         if (!file) throw new BadRequestException('Image is required');
-        const upload = await this.cloudinary.uploadFile(file.buffer, 'products');
+        //const upload = await this.cloudinary.uploadFile(file.buffer, 'products');
 
         await this.productsService.create({
             ...payload,
             status: this.parseBoolean(payload.status),
             emphasis: this.parseBoolean(payload.emphasis),
-            imageUrl: upload.url,
-            publicId: upload.public_id,
+            imageUrl: 'upload.url',
+            publicId: 'upload.public_id',
         });
     }
 

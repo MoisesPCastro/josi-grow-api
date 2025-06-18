@@ -6,6 +6,7 @@ export class ICreateProductDto {
   price: number;
   status: boolean | string
   emphasis?: boolean | string;
+  marca: string;
 }
 export interface IProduct {
   id: string;
