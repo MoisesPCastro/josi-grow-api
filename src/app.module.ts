@@ -6,6 +6,7 @@ import { CloudinaryModule } from './providers/cloudinary/cloudinary.module';
 import { ProductsModule } from './products/products.module';
 import { AuthMiddleware } from './middleware/autorization';
 import { FirestoreModule } from './fireBase/firestore.module';
+import { SettingModule } from './setting/setting-module';
 
 @Module({
   imports: [
@@ -13,7 +14,8 @@ import { FirestoreModule } from './fireBase/firestore.module';
     HealthModule,
     CloudinaryModule,
     ProductsModule,
-    FirestoreModule
+    FirestoreModule,
+    SettingModule
   ],
 })
 export class AppModule implements NestModule {
