@@ -1,12 +1,16 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Firestore, CollectionReference, Query } from '@google-cloud/firestore';
 import { IProduct, IProductsFile } from './interfaces';
+import { SettingService } from 'src/setting/setting.service';
 
 @Injectable()
 export class ProductsService {
     private readonly coll: CollectionReference;
 
-    constructor(@Inject('FIRESTORE') private readonly firestore: Firestore) {
+    constructor(
+        @Inject('FIRESTORE') private readonly firestore: Firestore,
+        private readonly settingService: SettingService,
+    ) {
         this.coll = this.firestore.collection('products');
     }
 
@@ -25,15 +29,16 @@ export class ProductsService {
         const snap = await query.get();
         const products = snap.docs.map(d => d.data() as IProduct);
 
-        // const orderBy = [] // futuro: buscar documento "orderBy"
-        return { products, orderBy: [] };
+        const orderBy = await this.settingService.getOrderViewProduct();
+        return { products, orderBy };
     }
 
     async findOne(id: string): Promise<IProductsFile> {
         const doc = await this.coll.doc(id).get();
         if (!doc.exists) throw new NotFoundException('Product not found');
         const p = doc.data() as IProduct;
-        return { products: [p], orderBy: [] };
+        const orderBy = await this.settingService.getOrderViewProduct();
+        return { products: [p], orderBy };
     }
 
     async update(id: string, dto: Partial<IProduct>): Promise<void> {

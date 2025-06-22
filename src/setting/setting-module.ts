@@ -9,5 +9,6 @@ import { FirestoreModule } from 'src/fireBase/firestore.module';
   ],
   providers: [SettingService],
   controllers: [SettingController],
+  exports: [SettingService],
 })
 export class SettingModule { }

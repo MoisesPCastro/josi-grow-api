@@ -22,17 +22,6 @@ export class ProductsController {
         return false;
     }
 
-    @Get('orderBy')
-    getOrderBy(): number[] {
-        return [];
-    }
-
-    @Post('orderBy')
-    @HttpCode(201)
-    createOrderBy(orderByRequest: number[]): void {
-        console.log('log do orderby', orderByRequest)
-    }
-
     @Get()
     async findAll(@Query('status') status?: string) {
         return this.productsService.findAll(status);
@@ -51,15 +40,17 @@ export class ProductsController {
         @UploadedFile() file: Express.Multer.File,
     ) {
         if (!file) throw new BadRequestException('Image is required');
-        //const upload = await this.cloudinary.uploadFile(file.buffer, 'products');
+        const upload = await this.cloudinary.uploadFile(file.buffer, 'products');
 
         await this.productsService.create({
             ...payload,
             status: this.parseBoolean(payload.status),
             emphasis: this.parseBoolean(payload.emphasis),
-            imageUrl: 'upload.url',
-            publicId: 'upload.public_id',
+            imageUrl: upload.secure_url,
+            publicId: upload.public_id,
         });
+
+        return { message: 'Produto criado com sucesso!' }
     }
 
     @Put(':id')

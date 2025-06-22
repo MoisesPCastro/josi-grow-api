@@ -22,5 +22,5 @@ export interface IProduct {
 
 export interface IProductsFile {
   products: IProduct[];
-  orderBy: number[];
+  orderBy: string[];
 }
